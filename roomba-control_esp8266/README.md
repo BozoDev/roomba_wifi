@@ -39,7 +39,9 @@ Most is on the main page, so here the
       * I took a "DC-DC step down" (was a bit of an overkill version - pic to follow) and hooked it up
         to the 14V Batt of the "PS2" (mini-DIN?) connector. Works great, but if I were to do it again,
         I'd also put in a small switch, so that I could power off the ESP without having to remove the
-        Roomba battery... I used some hotglue to attach it in the front left half of the Roomba. The main
+        Roomba battery... Make sure it allows a sufficient input range - I'm not the mentioned 14V are
+        still 14V whilst charging - documentation calls it 'unregulated' - so it may go up to close to
+        20V. I used some hotglue to attach it in the front left half of the Roomba. The main
         part mentionions a +5V connection on the curcuit-board, but mine looked quite a bit different
         (780 model) and I had read somewhere that supposedly you couldn't draw too much power from the
         internal 5V without risking the  device going into some sort of protective mode. Don't forget that
@@ -81,8 +83,8 @@ Most is on the main page, so here the
     * Use a multi-meter to measure/set the output of the DC-DC BEFORE connecting it to the ESP ;)
     * Also use e.g. USB 5V and measure the voltage at the place you'd connect to ESP-RX BEFORE you hook it
       up - just to make sure it's the desired 3.3V and all resistors are correctly connected
-    * I used 2 bread-board female jumper cables on the ESP-01 connector side and ran them out below the
-      Roomba DC charging socket at the side. One connected to GND and on RESET.
+    * I used 2 bread-board female-female jumper cables on the ESP-01 connector side and ran them out below
+      the Roomba DC charging socket at the side. One connected to GND and on RESET.
 
       
 
