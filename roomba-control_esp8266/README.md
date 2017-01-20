@@ -19,6 +19,7 @@ With the Arduino-IDE I used the OTA method, to upload changed versions of the fi
  * ESP8266-01 Module (preferably with 1M Flash)
  * A Roomba (I had 780 model - others may need tweaking to the commands)
 
+
 ## software
  * Arduino IDE (during development)
  * MQTT-Broker
@@ -26,6 +27,7 @@ With the Arduino-IDE I used the OTA method, to upload changed versions of the fi
   * Python-Wemo emulator
   * Some sort of home automation system that will control the Roomba either
       via MQTT or Web-API
+
 
 # Experienced issues
 ## Hardware
@@ -36,11 +38,14 @@ With the Arduino-IDE I used the OTA method, to upload changed versions of the fi
       Upload new version via OTA, change WiFi-credentials back and forth in the Webinterface "settings" 
       and so on...
   * ESP-01 needs an extra wire soldering to its pins in order to be able to wake up after sleep
+
 ## Software
   * At a later stage I set up another ESP-01 for development purposes, since I didn't want to risk having
       to dis-assemble the Roomba due to some bug.
       * Turned out, that 2 ESPs with the same MQTT-Broker-ID are not such a good idea, so if using more than
         1 ESP concurrently, make sure that both the HOST name AND the MQTT-ID are different...
+
+
 # ToDo
 ## Software
   * MQTT settings are stored, but not read - it will only use the compiled-in values
