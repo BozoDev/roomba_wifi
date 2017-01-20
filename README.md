@@ -14,6 +14,8 @@ Project has been done in Amiqual4Home Equipex Creativity Lab - https://amiqual4h
     
  * OR spark photon with latest firmware https://github.com/spark/firmware/releases
 
+ * OR ESP8266-XX (I ran it on 1M version of ESP-01)
+
  * Roomba - here model R3MOD24A - Unfortunately, commands can be sent to Roomba trew UART but INPUT commands are not received : no activity on Roomba Tx
 
 ## software 
