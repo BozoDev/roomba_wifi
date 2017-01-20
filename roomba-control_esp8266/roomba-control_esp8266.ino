@@ -192,6 +192,7 @@ static EIOMode getMode(void);
 static int8_t getBatTemp(void);
 static uint16_t getBatteryCharge(void);
 static uint16_t getBatteryCap(void);
+static int16_t getCurrentAmps(void);
 static EOICharge getChargingMode(void);
 static int readByte(int8_t& readByte, int timeout);
 static int roombaControl(String command, int val=0);
@@ -1084,8 +1085,12 @@ void handle_wifi_configPost() {
   // Turns out, that apparently a WiFi.begin with no parameters connects to the last (good?) one
   // So, let's see if we can fire up Wifi, successfully connect, and hope the ESP-Wifi
   //  then takes care of storing the credentials for us...
+  client.stop();
+  server.stop(); 
   WiFi.disconnect();
+  WiFi.mode(WIFI_OFF);                                // Simply switching from AP to STA mode keeps the AP running (across ESP.restart!!!)
   delay(1000);
+  WiFi.mode(WIFI_STA);
   WiFi.begin(_SSID.c_str(), _PASS.c_str());
   int i = 0;
   while (WiFi.status() != WL_CONNECTED && i < 31) {
@@ -1103,7 +1108,10 @@ void handle_wifi_configPost() {
       LOG_SERIAL.println("WiFi connected");
       LOG_SERIAL.println("My IP: " + String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]));
     #endif
-    
+    WMode = "1";
+    roombaControl("SONG");
+    delay(5000);
+    ESP.restart();
   } else {
     #if defined(DEBUG_ESP)
       LOG_SERIAL.println("WiFi connect failed");
@@ -1174,11 +1182,14 @@ void handle_wifi_configPost() {
   // Turns out, that it's a mess trying to read this data at setup time
   // I also had problems on an ESP-01 with 512K flash - somehow formating the SPIFFS
   //  screwed up the sketch on the module... (possibly due to crossing 256K... and trying to also use OTA)
-  // Stuff like changing static const is no fun... (with undefined variable length)
   // So, let's see if we can fire up Wifi, successfully connect, and hope the ESP-Wifi
   //  then takes care of storing the credentials for us...
+  client.stop();
+  server.stop(); 
   WiFi.disconnect();
+  WiFi.mode(WIFI_OFF);
   delay(1000);
+  WiFi.mode(WIFI_STA);
   WiFi.begin(_SSID.c_str(), _PASS.c_str());
   int i = 0;
   while (WiFi.status() != WL_CONNECTED && i < 31) {
@@ -1224,6 +1235,9 @@ void handle_wifi_configPost() {
       LOG_SERIAL.println(WiFi.localIP());
     #endif
     WMode = "1";
+    roombaControl("SONG");
+    delay(5000);
+    ESP.restart();
   }
 }
 
@@ -1326,18 +1340,18 @@ static void powerOff() {
     
     SERIAL_ROOMBA_CMD_TX.write(133);
 }
-static void goHome() {                                     // Sends the Roomba back to it's charging base
-  clean();                                          // Starts a cleaning cycle, so command 143 can be initiated
+static void goHome() {                                      // Sends the Roomba back to it's charging base
+  clean();                                                  // Starts a cleaning cycle, so command 143 can be initiated
   delay(5000);
-  SERIAL_ROOMBA_CMD_TX.write(143);                               // Sends the Roomba home to charge
+  SERIAL_ROOMBA_CMD_TX.write(143);                          // Sends the Roomba home to charge
   delay(50);
 }
-static void playSong() {                                   // Makes the Roomba play a little ditty
-  SERIAL_ROOMBA_CMD_TX.write(140);                         	    // Define a new song
-  SERIAL_ROOMBA_CMD_TX.write(0);                                 // Write to song slot #0
-  SERIAL_ROOMBA_CMD_TX.write(8);                                 // 8 notes long
-  SERIAL_ROOMBA_CMD_TX.write(60);                                // Everything below defines the C Major scale 
-  SERIAL_ROOMBA_CMD_TX.write(32); 
+static void playSong() {                                    // Makes the Roomba play a little ditty
+  SERIAL_ROOMBA_CMD_TX.write(140);                         	// Define a new song
+  SERIAL_ROOMBA_CMD_TX.write(0);                            // Write to song slot #0
+  SERIAL_ROOMBA_CMD_TX.write(8);                            // 8 notes long
+  SERIAL_ROOMBA_CMD_TX.write(60);                           // Everything below defines the C Major scale 
+  SERIAL_ROOMBA_CMD_TX.write(32);                           // Duration of a note
   SERIAL_ROOMBA_CMD_TX.write(62);
   SERIAL_ROOMBA_CMD_TX.write(32);
   SERIAL_ROOMBA_CMD_TX.write(64);
@@ -1369,7 +1383,7 @@ static void createSong1() {
   SERIAL_ROOMBA_CMD_TX.write(65);
   SERIAL_ROOMBA_CMD_TX.write(6);
 }
-static void playSong1() {                                   // Makes the Roomba play a little ditty
+static void playSong1() {
   setPassiveMode();
   SERIAL_ROOMBA_CMD_TX.write(141);                               // Play a song
   SERIAL_ROOMBA_CMD_TX.write(1);                                 // Play song slot #1
@@ -1434,22 +1448,22 @@ static void vibgyor() {                                    // Makes the main LED
 }
 static void gainControl() {                                // Gain control of the Roomba once it's gone back into passive mode
   setSafeMode();
-  SERIAL_ROOMBA_CMD_TX.write(132);                               // Full control mode
+  SERIAL_ROOMBA_CMD_TX.write(132);                         // Full control mode
   delay(50);
 }
-static void setPassiveMode() {                                // Gain control of the Roomba once it's gone back into passive mode
+static void setPassiveMode() {                             // Gain control of the Roomba once it's gone back into passive mode
   // Get the Roomba into control mode 
   SERIAL_ROOMBA_CMD_TX.write(128);   
   delay(50);    
 }
 static void setSafeMode() {                                // Gain control of the Roomba once it's gone back into passive mode
   setPassiveMode(); 
-  SERIAL_ROOMBA_CMD_TX.write(130);                               // Safe mode
+  SERIAL_ROOMBA_CMD_TX.write(130);                         // Safe mode
   delay(50);  
 }
 static void freeControl() {
   // Get the Roomba into control mode 
-  SERIAL_ROOMBA_CMD_TX.write(128);                               // Passive mode
+  SERIAL_ROOMBA_CMD_TX.write(128);                         // Passive mode
   delay(50);
 }
 static EIOMode getMode(void) {
@@ -1505,6 +1519,21 @@ static uint16_t getBatteryCap() {
     return -1;
   }
   return loc_readByte + battLevel;
+}
+static int16_t getCurrentAmps() {
+  int8_t loc_readByte = 0;
+  int16_t curAmps = 0;
+
+  SERIAL_ROOMBA_CMD_TX.write(142);
+  SERIAL_ROOMBA_CMD_TX.write(23);
+  if(readByte(loc_readByte, 50) == NO_BYTE_READ) {
+    return -1;
+  }
+  curAmps = loc_readByte << 8;
+  if(readByte(loc_readByte, 50) == NO_BYTE_READ) {
+    return -1;
+  }
+  return loc_readByte + curAmps;
 }
 static EOICharge getChargingMode(void) {
   int8_t loc_readByte = 0;
