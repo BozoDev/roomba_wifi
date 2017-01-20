@@ -93,9 +93,12 @@ static const char* _mqttRoombaName = "roomba";
 static const char* _mqttServer = "192.168.1.92";
 
 static const int _ddPin = 0;                      // _ddPin controls clean button was: D7
-static const int sleepTimeS = 3480;               //58 mins 3480s - I like to put it to sleep at night from 20.00 to 800 by sending a sleep command every hour...
-                                                  // Dammit - didn't work as espected - didn't come online again - luckily I had the leads to the reset pin ;)
-                                                  // ESP-01 needs hardware mod for this to work: http://tim.jagenberg.info/2015/01/18/low-power-esp8266/
+static const int sleepTimeS = 3480;               //58 mins 3480s - I like to put it to sleep at night from 20.00 to 800
+                                                  //  by sending a sleep command every hour...
+                                                  // Dammit - didn't work as expected - didn't come online again -
+                                                  //  luckily I had the leads to the reset pin ;)
+                                                  // ESP-01 needs hardware mod for this to work:
+                                                  //  http://tim.jagenberg.info/2015/01/18/low-power-esp8266/
 /**************************************************************************
  * Taken from github.com/incmve/roomba-esp8266
  */
