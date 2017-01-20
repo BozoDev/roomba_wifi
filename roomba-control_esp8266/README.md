@@ -13,6 +13,7 @@ I thought it better the Roomba started an AP and lets you enter your credentials
 
 With the Arduino-IDE I used the OTA method, to upload changed versions of the firmware.
 
+<img src="https://github.com/BozoDev/roomba_wifi/blob/master/roomba-control_esp8266/img/roomba_hack_0.jpg?raw=true" width=500>
 
 # Prerequisities
 ## hardware
