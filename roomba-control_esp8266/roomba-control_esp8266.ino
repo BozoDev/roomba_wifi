@@ -194,6 +194,8 @@ static uint16_t getBatteryCharge(void);
 static uint16_t getBatteryCap(void);
 static int16_t getCurrentAmps(void);
 static EOICharge getChargingMode(void);
+static void display7s_ip(unsigned char _ip0, unsigned char _ip1, unsigned char _ip2, unsigned char _ip3);
+static void displayBuf(int _byte, char _buf[4]);
 static int readByte(int8_t& readByte, int timeout);
 static int roombaControl(String command, int val=0);
 /**************************************************************************
@@ -511,13 +513,6 @@ static void setupWifi(void) {
     _ledStatus = HIGH;
     digitalWrite(LED_BUILTIN, _ledStatus);
   #endif
-  
-  #if defined(USESPIFFS)
-    if (SPIFFS.exists(roombaWifiCfgFile)) {
-      File f = SPIFFS.open(roombaWifiCfgFile, "r");
-      
-    }
-  #endif
   WiFi.begin();
   int i = 0;
   while (WiFi.status() != WL_CONNECTED && i < 31) {
@@ -531,9 +526,11 @@ static void setupWifi(void) {
   }
   if (WiFi.status() == WL_CONNECTED) {
     #if defined(DEBUG_ESP)
-      IPAddress ip = WiFi.localIP();
       LOG_SERIAL.println("WiFi connected");
-      LOG_SERIAL.println("My IP: " + String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]));
+      LOG_SERIAL.println("My IP: " + WiFi.localIP());
+    #else
+      IPAddress ip = WiFi.localIP();
+      display7s_ip(ip[0], ip[1], ip[2], ip[3]);
     #endif
     return;
   }
@@ -575,10 +572,12 @@ static void setupWifi(void) {
             ++i;
           }
           if (WiFi.status() == WL_CONNECTED) {
+            IPAddress ip = WiFi.localIP();
             #if defined(DEBUG_ESP)
-              IPAddress ip = WiFi.localIP();
               LOG_SERIAL.println("WiFi connected");
               LOG_SERIAL.println("My IP: " + String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]));
+            #else
+              display7s_ip(ip[0], ip[1], ip[2], ip[3]);
             #endif
             return;
           }
@@ -603,13 +602,15 @@ static void start_AP() {
     WiFi.mode(WIFI_AP);
     WiFi.softAP(APssid, APpassword);
     WMode = "AP";
+    IPAddress ip = WiFi.softAPIP();
     #if defined(DEBUG_ESP)
-      IPAddress myIP = WiFi.softAPIP();
       LOG_SERIAL.print("Connected to ");
       LOG_SERIAL.println(APssid);
       LOG_SERIAL.print("IP address: ");
-      LOG_SERIAL.println(myIP);
+      LOG_SERIAL.println(ip);
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on
+    #else
+      display7s_ip(ip[0], ip[1], ip[2], ip[3]);
     #endif
 }
 
@@ -834,28 +835,27 @@ void handle_root() {
   ClientIP = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
   delay(500);
 
-  String card1  = panelHeaderName + "General Network" + panelHeaderEnd + panelBodyStart;
+  String card1  = panelHeaderName + "General Info" + panelHeaderEnd + panelBodyStart;
   card1        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("IP Address") + panelBodyValue + ClientIP + panelBodyRowEnd;
   card1        += panelBodySymbolS + String("tag") + panelBodySymbolE + String("Client Name") + panelBodyValue + espName + panelBodyRowEnd;
-  card1        += panelBodySymbolS + String("info") + String("Roomba-WiFi Version") + panelBodyValue + roomba_wifiVersion + panelBodyRowEnd + panelBodyEnd;
+  card1        += panelBodySymbolS + String("clock-o") + panelBodySymbolE + String("Uptime") + panelBodyValue + hour() + String(" h ") + minute() + String(" min ") + second() + String(" sec") + panelBodyRowEnd;
+  card1        += panelBodySymbolS + String("info") + panelBodySymbolE  + String("Roomba-WiFi Version") + panelBodyValue + roomba_wifiVersion + panelBodyRowEnd + panelBodyEnd;
   String card2  = panelHeaderName + "Interface status" + panelHeaderEnd + panelBodyStart;
   card2        += panelBodySymbolS + String("info") + panelBodySymbolE + String("Roomba OI-Mode") + panelBodyValue + s_currMode + panelBodyEnd;
   String card3  = panelHeaderName + "Charging state" + panelHeaderEnd + panelBodyStart;
   card3        += panelBodySymbolS + String("battery-half") + panelBodySymbolE + String("Charged capacity") + panelBodyValue + s_chargeState + String(" of (approx.) ") + s_chargeCap + String("mAh") + panelBodyRowEnd;
   card3        += panelBodySymbolS + String("info") + panelBodySymbolE + String("Charging mode: ") + panelBodyValue + s_chargeMode + panelBodyRowEnd;
   card3        += panelBodySymbolS + String("battery-3") + panelBodySymbolE + String("Power state:") + panelBodyValue + s_powerReading + String("mAh") + panelBodyRowEnd + panelBodyEnd;
-  String card4  = panelHeaderName + "Health" + panelHeaderEnd + panelBodyStart;
-  card4        += panelBodySymbolS + String("time") + panelBodySymbolE + String("Uptime") + panelBodyValue + hour() + String(" h ") + minute() + String(" min ") + second() + String(" sec") + panelBodyRowEnd + panelBodyEnd;
-  String card5  = panelHeaderName + "Connections" + panelHeaderEnd + panelBodyStart;
-  card5        += panelHeaderName + String("MQTT server") + panelHeaderEnd + panelBodyStart;
-  card5        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Broker") + String("IP Address") + panelBodyValue + _mqttServer + panelBodyRowEnd;
-  card5        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Publisher") + String("ID") + panelBodyValue + _mqttRoombaName + panelBodyRowEnd + panelBodyEnd;
-  card5        += panelBodyRowEnd + panelBodyEnd;
+  String card4  = panelHeaderName + "Connections" + panelHeaderEnd + panelBodyStart;
+  card4        += panelHeaderName + String("MQTT server") + panelHeaderEnd + panelBodyStart;
+  card4        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Broker") + String("IP Address") + panelBodyValue + _mqttServer + panelBodyRowEnd;
+  card4        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Publisher") + String("ID") + panelBodyValue + _mqttRoombaName + panelBodyRowEnd + panelBodyEnd;
+  card4        += panelBodyRowEnd + panelBodyEnd;
 
   String title3 = panelHeaderName + String("Commands") + panelHeaderEnd;
   String commands = panelBodySymbolS + String("globe") + panelBodySymbolE + panelcenter + roombactrl + panelBodyEnd;
 
-  server.send ( 200, "text/html", header + navbar + containerStart + card1 + card2 + card3 + card4 + card5 + panelEnd + title3 + commands + containerEnd + siteEnd);
+  server.send ( 200, "text/html", header + navbar + containerStart + card1 + card2 + card3 + card4 + panelEnd + title3 + commands + containerEnd + siteEnd);
 }
 String getContentType(String filename) {
   if (server.hasArg("download")) return "application/octet-stream";
@@ -1112,10 +1112,12 @@ void handle_wifi_configPost() {
     ++i;
   }
   if (WiFi.status() == WL_CONNECTED && i < 32) {
+    IPAddress ip = WiFi.localIP();
     #if defined(DEBUG_ESP)
-      IPAddress ip = WiFi.localIP();
       LOG_SERIAL.println("WiFi connected");
       LOG_SERIAL.println("My IP: " + String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]));
+    #else
+      display7s_ip(ip[0], ip[1], ip[2], ip[3]);
     #endif
     WMode = "1";
     roombaControl("SONG");
@@ -1228,13 +1230,15 @@ void handle_wifi_configPost() {
     WiFi.mode(WIFI_AP);
     WiFi.softAP(APssid, APpassword);
     WMode = "AP";
-    IPAddress myIP = WiFi.softAPIP();
+    IPAddress ip = WiFi.softAPIP();
     #if defined(DEBUG_ESP)
       LOG_SERIAL.print("Connected to ");
       LOG_SERIAL.println(APssid);
       LOG_SERIAL.print("IP address: ");
-      LOG_SERIAL.println(myIP);
+      LOG_SERIAL.println(ip);
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on
+    #else
+      display7s_ip(ip[0], ip[1], ip[2], ip[3]);
     #endif
   } else {
     #if defined(DEBUG_ESP)
@@ -1242,6 +1246,9 @@ void handle_wifi_configPost() {
       LOG_SERIAL.println("WiFi connected");  
       LOG_SERIAL.println("IP address: ");
       LOG_SERIAL.println(WiFi.localIP());
+    #else
+      IPAddress ip = WiFi.softAPIP();
+      display7s_ip(ip[0], ip[1], ip[2], ip[3]);
     #endif
     WMode = "1";
     roombaControl("SONG");
@@ -1554,6 +1561,46 @@ static EOICharge getChargingMode(void) {
   } else {
   return (EOICharge)(loc_readByte + 1);
   }
+}
+/* The following 2 functions are used to display an IP address on Roomba's 7-Seg. display
+ *  one byte of the IP at a time for 1 1/2 seconds (it's a real Q&D and I'm sure there's a
+ *  better way to implement esp. the 2nd function, but for me & now it works ;) ).
+ */
+static void display7s_ip(unsigned char _ip0, unsigned char _ip1, unsigned char _ip2, unsigned char _ip3) {
+  char buf[4];
+
+  SERIAL_ROOMBA_CMD_TX.write(128);    // Attn!
+  SERIAL_ROOMBA_CMD_TX.write(131);    // Put it in safe mode
+  displayBuf(_ip0, itoa(_ip0, buf, 10));
+  displayBuf(_ip1, itoa(_ip1, buf, 10));
+  displayBuf(_ip2, itoa(_ip2, buf, 10));
+  displayBuf(_ip3, itoa(_ip3, buf, 10));
+  freeControl();
+}
+static void displayBuf(int _byte, char _buf[4]){
+  unsigned char _d1;
+  unsigned char _d2;
+  unsigned char _d3;
+
+  if(_byte < 10){
+    _d1=32;
+    _d2=32;
+    _d3=_buf[0];
+  } else if(_byte < 100){
+    _d1=32;
+    _d2=_buf[0];
+    _d3=_buf[1];    
+  } else {
+    _d1=_buf[0];
+    _d2=_buf[1];
+    _d3=_buf[2];
+  }
+  SERIAL_ROOMBA_CMD_TX.write(164);
+  SERIAL_ROOMBA_CMD_TX.write(32);
+  SERIAL_ROOMBA_CMD_TX.write(_d1);
+  SERIAL_ROOMBA_CMD_TX.write(_d2);
+  SERIAL_ROOMBA_CMD_TX.write(_d3);
+  delay(1500);
 }
 static int readByte(int8_t& readByte, int timeout) {
   int count = 0;
