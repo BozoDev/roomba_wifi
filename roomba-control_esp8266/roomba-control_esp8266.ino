@@ -82,6 +82,7 @@ String formatBytes(size_t bytes) {
   #define SERIAL_ROOMBA_CMD_RX Serial
 #endif
 #define USESPIFFS
+// #define USEWEBFWUPD
 
 /**************************************************************************
  * Manifest Constants
@@ -209,7 +210,9 @@ static bool handle_fileRead(String path);
 static void handleFormat();
 static void handle_fupload_html();
 static void handle_api();
-static void handle_updatefwm_html();
+#if defined(USEWEBFWUPD)
+  static void handle_updatefwm_html();
+#endif
 static void handle_filemanager_ajax();
 static void handleFileDelete();
 static void handle_roomba_start();
@@ -293,7 +296,11 @@ static bool _ledStatus = HIGH;
 // HTML
 static String header           =  "<html lang='en'><head><title>Roomba-WiFi control panel</title><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><link rel='stylesheet' href='http://www.w3schools.com/lib/w3.css'><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'></script><meta http-equiv='refresh' content='50'></head><body>";
 static String headerRedir      =  "<html lang='en'><head><meta http-equiv='refresh' content='2; url=http://" + String(espName) + "/' /></head><body>";
-static String navbar           =  "<ul class='w3-navbar w3-border w3-grey'><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'>Roomba-WiFi control panel</a></li><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'><span class='fa fa-info'></span> Status</a></li><li class='w3-dropdown-hover'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='#'><span class='fa fa-wrench'></span>Tools <i class='fa fa-caret-down'></i></a><div class='w3-dropdown-content w3-grey w3-card-4'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/updatefwm'><span class='fa fa-upload'></span> Firmware</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/filemanager.html'><span class='fa fa-folder-open'></span> File manager</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/fupload'><span class='fa fa-upload'></span> File upload</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/setup.html'><span class='fa fa-cogs'></span> Settings</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='https://github.com/BozoDev/roomba_wifi/wiki' target='_blank'><span class='fa fa-question'></span> Help</a></div></li></ul>";
+#if defined(USEWEBFWUPD)
+  static String navbar           =  "<ul class='w3-navbar w3-border w3-grey'><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'>Roomba-WiFi control panel</a></li><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'><span class='fa fa-info'></span> Status</a></li><li class='w3-dropdown-hover'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='#'><span class='fa fa-wrench'></span>Tools <i class='fa fa-caret-down'></i></a><div class='w3-dropdown-content w3-grey w3-card-4'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/updatefwm'><span class='fa fa-upload'></span> Firmware</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/filemanager.html'><span class='fa fa-folder-open'></span> File manager</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/fupload'><span class='fa fa-upload'></span> File upload</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/setup.html'><span class='fa fa-cogs'></span> Settings</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='https://github.com/BozoDev/roomba_wifi/wiki' target='_blank'><span class='fa fa-question'></span> Help</a></div></li></ul>";
+#else
+  static String navbar           =  "<ul class='w3-navbar w3-border w3-grey'><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'>Roomba-WiFi control panel</a></li><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'><span class='fa fa-info'></span> Status</a></li><li class='w3-dropdown-hover'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='#'><span class='fa fa-wrench'></span>Tools <i class='fa fa-caret-down'></i></a><div class='w3-dropdown-content w3-grey w3-card-4'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/filemanager.html'><span class='fa fa-folder-open'></span> File manager</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/fupload'><span class='fa fa-upload'></span> File upload</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/setup.html'><span class='fa fa-cogs'></span> Settings</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='https://github.com/BozoDev/roomba_wifi/wiki' target='_blank'><span class='fa fa-question'></span> Help</a></div></li></ul>";
+#endif
 static String containerStart   =  "<div class='w3-container'>";
 static String containerEnd     =  "</div>";
 static String siteEnd          =  "</body></html>";
@@ -677,7 +684,9 @@ static void setupWebServer(void) {
   server.on("/api", handle_api);
 #if defined(USESPIFFS)
   server.on("/format", handleFormat);
-  server.on("/updatefwm", handle_updatefwm_html);
+  #if defined(USEWEBFWUPD)
+    server.on("/updatefwm", handle_updatefwm_html);
+  #endif
   server.on("/fupload", handle_fupload_html);
   server.on("/filemanager_ajax", handle_filemanager_ajax);
   server.on("/delete", handleFileDelete);
@@ -691,6 +700,7 @@ static void setupWebServer(void) {
   server.on("/mqttsetup", HTTP_POST, handle_mqtt_configPost);
 #endif
 
+#if defined(USEWEBFWUPD)
   // Upload firmware:
   server.on("/updatefw2", HTTP_POST, []() {
     server.sendHeader("Connection", "close");
@@ -722,6 +732,7 @@ static void setupWebServer(void) {
     }
     yield();
   });
+#endif
   
 #if defined(USESPIFFS)
   // upload file to SPIFFS
@@ -978,9 +989,11 @@ void handle_api() {
   }
   server.send ( 200, "text/html", String(headerRedir) + "OK" + String(siteEnd));
 }
+#if defined(USEWEBFWUPD)
 void handle_updatefwm_html() {
   server.send ( 200, "text/html", "<form method='POST' action='/updatefw2' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form><br<b>For firmware only!!</b>");
 }
+#endif
 void handle_filemanager_ajax() {
   String form = server.arg("form");
   if (form != "filemanager") {
