@@ -105,7 +105,7 @@ Most is on the main page, so here the
 ## Software
   * At a later stage I set up another ESP-01 for development purposes, since I didn't want to risk having
       to dis-assemble the Roomba due to some bug.
-      * Turned out, that 2 ESPs with the same MQTT-Broker-ID are not such a good idea, so if using more than
+      * Turned out, that 2 ESPs with the same MQTT-Client-ID are not such a good idea, so if using more than
         1 ESP concurrently, make sure that both the HOST name AND the MQTT-ID are different...
 
 

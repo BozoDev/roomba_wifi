@@ -289,22 +289,24 @@ static bool _ledStatus = HIGH;
  * Taken from github.com/incmve/roomba-esp8266
  */
 // HTML
-static String header           =  "<html lang='en'><head><title>Roomba-WiFi control panel</title><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script><script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script><meta http-equiv='refresh' content='50'></head><body>";
+static String header           =  "<html lang='en'><head><title>Roomba-WiFi control panel</title><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><link rel='stylesheet' href='http://www.w3schools.com/lib/w3.css'><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'></script><meta http-equiv='refresh' content='50'></head><body>";
 static String headerRedir      =  "<html lang='en'><head><meta http-equiv='refresh' content='2; url=http://" + String(espName) + "/' /></head><body>";
-static String navbar           =  "<nav class='navbar navbar-default'><div class='container-fluid'><div class='navbar-header'><a class='navbar-brand' href='/'>Roomba-WiFi control panel</a></div><div><ul class='nav navbar-nav'><li><a href='/'><span class='glyphicon glyphicon-info-sign'></span> Status</a></li><li class='dropdown'><a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='glyphicon glyphicon-cog'></span> Tools<span class='caret'></span></a><ul class='dropdown-menu'><li><a href='/updatefwm'><span class='glyphicon glyphicon-upload'></span> Firmware</a></li><li><a href='/filemanager.html'><span class='glyphicon glyphicon-file'></span> File manager</a></li><li><a href='/fupload'> File upload</a></li><li><a href='/setup.html'><span class='glyphicon glyphicon-file'></span> Settings</a></li></ul></li><li><a href='https://github.com/incmve/roomba-eps8266/wiki' target='_blank'><span class='glyphicon glyphicon-question-sign'></span> Help</a></li></ul></div></div></nav>";
-static String containerStart   =  "<div class='container'><div class='row'>";
-static String containerEnd     =  "<div class='clearfix visible-lg'></div></div></div>";
+static String navbar           =  "<ul class='w3-navbar w3-border w3-grey'><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'>Roomba-WiFi control panel</a></li><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'><span class='fa fa-info'></span> Status</a></li><li class='w3-dropdown-hover'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='#'><span class='fa fa-wrench'></span>Tools <i class='fa fa-caret-down'></i></a><div class='w3-dropdown-content w3-grey w3-card-4'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/updatefwm'><span class='fa fa-upload'></span> Firmware</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/filemanager.html'><span class='fa fa-folder-open'></span> File manager</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/fupload'><span class='fa fa-upload'></span> File upload</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/setup.html'><span class='fa fa-cogs'></span> Settings</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='https://github.com/BozoDev/roomba_wifi/wiki' target='_blank'><span class='fa fa-question'></span> Help</a></div></li></ul>";
+static String containerStart   =  "<div class='w3-container'>";
+static String containerEnd     =  "</div>";
 static String siteEnd          =  "</body></html>";
 
-static String panelHeaderName  =  "<div class='col-md-4'><div class='page-header'><h1>";
-static String panelHeaderEnd   =  "</h1></div>";
+static String panelHeaderName  =  "<div class='w3-card-4'><h4>";
+static String panelHeaderEnd   =  "</h4>";
 static String panelEnd         =  "</div>";
 
-static String panelBodySymbol  =  "<div class='panel panel-default'><div class='panel-body'><span class='glyphicon glyphicon-";
-static String panelBodyName    =  "'></span> ";
+static String panelBodyStart   =  "<div class='w3-panel w3-card-4'><p>";
+static String panelBodySymbolS =  "<span class='fa fa-";
+static String panelBodySymbolE =  "'></span> ";
 static String panelBodyValue   =  "<span class='pull-right'>";
+static String panelBodyRowEnd  =  "</p></span>";
 static String panelcenter      =  "<div class='row'><div class='span6' style='text-align:center'>";
-static String panelBodyEnd     =  "</span></div></div>";
+static String panelBodyEnd     =  "</span></div>";
 
 static String inputBodyStart   =  "<form action='' method='POST'><div class='panel panel-default'><div class='panel-body'>";
 static String inputBodyName    =  "<div class='form-group'><div class='input-group'><span class='input-group-addon' id='basic-addon1'>";
@@ -782,8 +784,9 @@ void handle_root() {
   String s_chargeMode = "Undef.";
   String s_chargeState = String(getBatteryCharge(),DEC);
   String s_chargeCap = String(getBatteryCap());
-  
+  String s_powerReading = String(getCurrentAmps());
   EIOMode e_currMode = getMode();
+  
   switch (e_currMode) {
     case OFF:
       s_currMode = "Off";
@@ -831,22 +834,28 @@ void handle_root() {
   ClientIP = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
   delay(500);
 
-  String title1       = panelHeaderName + String("Roomba-WiFi Main Page") + panelHeaderEnd;
-  String IPAddClient  = panelBodySymbol + String("globe") + panelBodyName + String("IP Address") + panelBodyValue + ClientIP + panelBodyEnd;
-  String ClientName   = panelBodySymbol + String("tag") + panelBodyName + String("Client Name") + panelBodyValue + espName + panelBodyEnd;
-  String Version      = panelBodySymbol + String("info-sign") + panelBodyName + String("Roomba-WiFi Version") + panelBodyValue + roomba_wifiVersion + panelBodyEnd;
-  String OIState      = panelBodySymbol + String("info-sign") + panelBodyName + String("Roomba Mode") + panelBodyValue + s_currMode + panelBodyEnd;
-  String Charge       = panelBodySymbol + String("info-sign") + panelBodyName + String("Charging state:") + panelBodyValue + s_chargeState + String(" of ") + s_chargeCap + String("mAh in ") + s_chargeMode + String(" mode") + panelBodyEnd + panelEnd;
-  String Uptime       = panelBodySymbol + String("time") + panelBodyName + String("Uptime") + panelBodyValue + hour() + String(" h ") + minute() + String(" min ") + second() + String(" sec")+ panelBodyEnd + panelEnd;
-  
-  String title2       = panelHeaderName + String("MQTT server") + panelHeaderEnd;
-  String IPAddServ    = panelBodySymbol + String("Broker") + panelBodyName + String("IP Address") + panelBodyValue + _mqttServer + panelBodyEnd;
-  String User         = panelBodySymbol + String("Publisher") + panelBodyName + String("ID") + panelBodyValue + _mqttRoombaName + panelBodyEnd + panelEnd;
+  String card1  = panelHeaderName + "General Network" + panelHeaderEnd + panelBodyStart;
+  card1        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("IP Address") + panelBodyValue + ClientIP + panelBodyRowEnd;
+  card1        += panelBodySymbolS + String("tag") + panelBodySymbolE + String("Client Name") + panelBodyValue + espName + panelBodyRowEnd;
+  card1        += panelBodySymbolS + String("info") + String("Roomba-WiFi Version") + panelBodyValue + roomba_wifiVersion + panelBodyEnd;
+  String card2  = panelHeaderName + "Interface status" + panelHeaderEnd + panelBodyStart;
+  card2        += panelBodySymbolS + String("info") + panelBodySymbolE + String("Roomba Mode") + panelBodyValue + s_currMode + panelBodyEnd;
+  String card3  = panelHeaderName + "Charging state" + panelHeaderEnd + panelBodyStart;
+  card3        += panelBodySymbolS + String("battery-half") + panelBodySymbolE + String("Charged capacity") + panelBodyValue + s_chargeState + String(" of (approx.) ") + s_chargeCap + String("mAh") + panelBodyRowEnd;
+  card3        += panelBodySymbolS + String("info") + panelBodySymbolE + String(" mode") + s_chargeMode + panelBodyRowEnd;
+  card3        += panelBodySymbolS + String("battery-3") + panelBodySymbolE + String("Power state:") + panelBodyValue + s_powerReading + String("mAh") + panelBodyEnd;
+  String card4  = panelHeaderName + "Health" + panelHeaderEnd + panelBodyStart;
+  card4        += panelBodySymbolS + String("time") + String("Uptime") + panelBodyValue + hour() + String(" h ") + minute() + String(" min ") + second() + String(" sec")+ panelBodyEnd;
+  String card5  = panelHeaderName + "Connections" + panelHeaderEnd + panelBodyStart;
+  card5        += panelHeaderName + String("MQTT server") + panelHeaderEnd + panelBodyStart;
+  card5        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Broker") + String("IP Address") + panelBodyValue + _mqttServer + panelBodyRowEnd;
+  card5        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Publisher") + String("ID") + panelBodyValue + _mqttRoombaName + panelBodyRowEnd + panelBodyEnd;
+  card5        += panelBodyRowEnd + panelBodyEnd;
 
   String title3 = panelHeaderName + String("Commands") + panelHeaderEnd;
-  String commands = panelBodySymbol + panelBodyName + panelcenter + roombactrl + panelBodyEnd;
+  String commands = panelBodySymbolS + String("globe") + panelBodySymbolE + panelcenter + roombactrl + panelBodyEnd;
 
-  server.send ( 200, "text/html", header + navbar + containerStart + title1 + IPAddClient + ClientName + Version + OIState + Charge + Uptime + title2 + IPAddServ + User + title3 + commands + containerEnd + siteEnd);
+  server.send ( 200, "text/html", header + navbar + containerStart + card1 + card2 + card3 + card4 + card5 + panelEnd + title3 + commands + containerEnd + siteEnd);
 }
 String getContentType(String filename) {
   if (server.hasArg("download")) return "application/octet-stream";
@@ -1046,9 +1055,9 @@ void handle_config() {
   // Build HTML page with existing vals pre-filled
   HTML = header + navbar + containerStart;
   HTML += panelHeaderName + String("Roomba WiFi Config") + panelHeaderEnd;
-  HTML += panelBodySymbol + String("globe") + panelBodyName + String("IP Address") + panelBodyValue + ClientIP + panelBodyEnd;
-  HTML += panelBodySymbol + String("globe") + panelBodyName + "<form method='POST' action='/wifisetup' enctype='multipart/form-data'>SSID: <input type='text' name='ssid' value='" + String(l_ssid) +"'><BR>Pass: <input type='password' name='wifipass'><BR><input type='submit' value='Save'></form>" + "Beware: no \"[]=\" allowed in password" + panelBodyEnd;
-  HTML += panelBodySymbol + String("globe") + panelBodyName + "<form method='POST' action='/mqttsetup' enctype='multipart/form-data'>Broker: <input type='text' name='broker' value='" + String(l_broker) +"'><BR>Command-Topic: <input type='text' name='topic' value='" + String(l_topic) + "'><BR><input type='submit' value='Save'></form>"+ panelBodyEnd;
+  HTML += panelBodySymbolS + String("globe") + panelBodyStart + String("IP Address") + panelBodyValue + ClientIP + panelBodyEnd;
+  HTML += panelBodySymbolS + String("globe") + panelBodyStart + "<form method='POST' action='/wifisetup' enctype='multipart/form-data'>SSID: <input type='text' name='ssid' value='" + String(l_ssid) +"'><BR>Pass: <input type='password' name='wifipass'><BR><input type='submit' value='Save'></form>" + "Beware: no \"[]=\" allowed in password" + panelBodyEnd;
+  HTML += panelBodySymbolS + String("globe") + panelBodyStart + "<form method='POST' action='/mqttsetup' enctype='multipart/form-data'>Broker: <input type='text' name='broker' value='" + String(l_broker) +"'><BR>Command-Topic: <input type='text' name='topic' value='" + String(l_topic) + "'><BR><input type='submit' value='Save'></form>"+ panelBodyEnd;
 
   HTML += containerEnd + siteEnd;
   server.send ( 200, "text/html", HTML);
