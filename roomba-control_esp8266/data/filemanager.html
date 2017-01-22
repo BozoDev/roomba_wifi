@@ -5,6 +5,7 @@
       <title>Roombot</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
       <link rel="stylesheet" href="/css/bootstrap-extra.css">
 <script type="text/javascript">
 // Plain JS to show header when no JQuery available
@@ -229,8 +230,21 @@ var sel = $( "#files" ).val();
     </script>    
    </head>
    <body>
-	
-	<div id="modal-dialog" class="modal fade">
+    <ul class='w3-navbar w3-border w3-grey'>
+      <li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'>Roomba-WiFi control panel</a></li>
+      <li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'><span class='fa fa-info'></span> Status</a></li>
+      <li class='w3-dropdown-hover'>
+        <a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='#'><span class='fa fa-wrench'></span>Tools <i class='fa fa-caret-down'></i></a>
+        <div class='w3-dropdown-content w3-grey w3-card-4'>
+          <a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/filemanager.html'><span class='fa fa-folder-open'></span> File manager</a>
+          <a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/fupload'><span class='fa fa-upload'></span> File upload</a>
+          <a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/setup.html'><span class='fa fa-cogs'></span> Settings</a>
+          <a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='https://github.com/BozoDev/roomba_wifi/wiki' target='_blank'><span class='fa fa-question'></span> Help</a>
+        </div>
+      </li>
+    </ul>	
+
+    <div id="modal-dialog" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
