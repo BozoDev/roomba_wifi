@@ -1084,7 +1084,7 @@ void handle_config() {
   HTML += panelHeaderName + String(" MQTT Setup") + panelHeaderEnd + panelBodyStart;
   HTML += panelBodySymbolS + String("globe") + panelBodySymbolE + "<form method='POST' action='/mqttsetup' enctype='multipart/form-data'>";
   HTML += "Broker: <input class='w3-input w3-animate-input w3-border w3-round-large' type='text' name='broker' style='width:15%' placeholder='" + String(l_broker) +"'>";
-  HTML += "<BR>Command-Topic: <input class='w3-input w3-animate-input w3-border w3-round-large' type='text' name='topic' style='width:25%' placeholder='" + String(l_topic) + "'>";
+  HTML += "<BR>Command-Topic: <input class='w3-input w3-animate-input w3-border w3-round-large' type='text' name='topic' style='width:25%' value='" + String(l_topic) + "'>";
   HTML += "<BR><input type='submit' value='Save'></form>" + panelBodyRowEnd + panelBodyEnd;
   HTML += containerEnd + siteEnd;
   server.send ( 200, "text/html", HTML);
