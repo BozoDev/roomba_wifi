@@ -94,7 +94,7 @@ static const char* _mqttRoombaName = "roomba";
 static const char* _mqttServer = "192.168.1.92";
 
 static const int _ddPin = 0;                      // _ddPin controls clean button was: D7
-static const int sleepTimeS = 3480;               //58 mins 3480s - I like to put it to sleep at night from 20.00 to 800
+static const int sleepTimeS = 3480;               // 58 mins 3480s - I like to put it to sleep at night from 20.00 to 800
                                                   //  by sending a sleep command every hour...
                                                   // Dammit - didn't work as expected - didn't come online again -
                                                   //  luckily I had the leads to the reset pin ;)
@@ -297,9 +297,9 @@ static bool _ledStatus = HIGH;
 static String header           =  "<html lang='en'><head><title>Roomba-WiFi control panel</title><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><link rel='stylesheet' href='http://www.w3schools.com/lib/w3.css'><link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'></script><meta http-equiv='refresh' content='50'></head><body>";
 static String headerRedir      =  "<html lang='en'><head><meta http-equiv='refresh' content='2; url=http://" + String(espName) + "/' /></head><body>";
 #if defined(USEWEBFWUPD)
-  static String navbar           =  "<ul class='w3-navbar w3-border w3-grey'><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'>Roomba-WiFi control panel</a></li><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'><span class='fa fa-info'></span> Status</a></li><li class='w3-dropdown-hover'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='#'><span class='fa fa-wrench'></span>Tools <i class='fa fa-caret-down'></i></a><div class='w3-dropdown-content w3-grey w3-card-4'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/updatefwm'><span class='fa fa-upload'></span> Firmware</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/filemanager.html'><span class='fa fa-folder-open'></span> File manager</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/fupload'><span class='fa fa-upload'></span> File upload</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/setup.html'><span class='fa fa-cogs'></span> Settings</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='https://github.com/BozoDev/roomba_wifi/wiki' target='_blank'><span class='fa fa-question'></span> Help</a></div></li></ul>";
+  static String navbar         =  "<ul class='w3-navbar w3-border w3-grey'><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'>Roomba-WiFi control panel</a></li><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'><span class='fa fa-info'></span> Status</a></li><li class='w3-dropdown-hover'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='#'><span class='fa fa-wrench'></span>Tools <i class='fa fa-caret-down'></i></a><div class='w3-dropdown-content w3-grey w3-card-4'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/updatefwm'><span class='fa fa-upload'></span> Firmware</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/filemanager.html'><span class='fa fa-folder-open'></span> File manager</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/fupload'><span class='fa fa-upload'></span> File upload</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/setup.html'><span class='fa fa-cogs'></span> Settings</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='https://github.com/BozoDev/roomba_wifi/wiki' target='_blank'><span class='fa fa-question'></span> Help</a></div></li></ul>";
 #else
-  static String navbar           =  "<ul class='w3-navbar w3-border w3-grey'><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'>Roomba-WiFi control panel</a></li><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'><span class='fa fa-info'></span> Status</a></li><li class='w3-dropdown-hover'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='#'><span class='fa fa-wrench'></span>Tools <i class='fa fa-caret-down'></i></a><div class='w3-dropdown-content w3-grey w3-card-4'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/filemanager.html'><span class='fa fa-folder-open'></span> File manager</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/fupload'><span class='fa fa-upload'></span> File upload</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/setup.html'><span class='fa fa-cogs'></span> Settings</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='https://github.com/BozoDev/roomba_wifi/wiki' target='_blank'><span class='fa fa-question'></span> Help</a></div></li></ul>";
+  static String navbar         =  "<ul class='w3-navbar w3-border w3-grey'><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'>Roomba-WiFi control panel</a></li><li><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/'><span class='fa fa-info'></span> Status</a></li><li class='w3-dropdown-hover'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='#'><span class='fa fa-wrench'></span>Tools <i class='fa fa-caret-down'></i></a><div class='w3-dropdown-content w3-grey w3-card-4'><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/filemanager.html'><span class='fa fa-folder-open'></span> File manager</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/fupload'><span class='fa fa-upload'></span> File upload</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='/setup.html'><span class='fa fa-cogs'></span> Settings</a><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='https://github.com/BozoDev/roomba_wifi/wiki' target='_blank'><span class='fa fa-question'></span> Help</a></div></li></ul>";
 #endif
 static String containerStart   =  "<div class='w3-container'>";
 static String containerEnd     =  "</div>";
@@ -321,7 +321,7 @@ static String inputBodyStart   =  "<form action='' method='POST'><div class='pan
 static String inputBodyName    =  "<div class='form-group'><div class='input-group'><span class='input-group-addon' id='basic-addon1'>";
 static String inputBodyPOST    =  "</span><input type='text' name='";
 static String inputBodyClose   =  "' class='form-control' aria-describedby='basic-addon1'></div></div>";
-static String roombactrl       =  "<a href='/roombastart'<button type='button' class='btn btn-default'><span class='glyphicon glyphicon-play' aria-hidden='true'></span> Start</button></a><a href='/roombadock'<button type='button' class='btn btn-default'><span class='glyphicon glyphicon-home' aria-hidden='true'></span> Dock</button></a></div>";
+static String roombactrl       =  "<a href='/roombastart' type='button' class='w3-btn w3-round-large w3-text-shadow w3-grey w3-text-dark-grey w3-hover-text-white'><span class='fa fa-play' aria-hidden='true'></span> Start</a><a href='/roombadock' type='button' class='w3-btn w3-round-large w3-text-shadow w3-grey w3-text-dark-grey w3-hover-text-white'><span class='fa fa-home'></span> Dock</a>";
 String ClientIP;
 // I'm using an ESP-01 module with limited pins:
 #define SERIAL_RX     3  // pin for SoftwareSerial RX 5
@@ -863,10 +863,10 @@ void handle_root() {
   card4        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Publisher") + String("ID") + panelBodyValue + _mqttRoombaName + panelBodyRowEnd + panelBodyEnd;
   card4        += panelBodyRowEnd + panelBodyEnd;
 
-  String title3 = panelHeaderName + String("Commands") + panelHeaderEnd;
-  String commands = panelBodySymbolS + String("globe") + panelBodySymbolE + panelcenter + roombactrl + panelBodyEnd;
+  String card5 = panelHeaderName + String("Commands") + panelHeaderEnd + panelBodyStart;
+  card5        += panelBodySymbolS + String("globe") + panelBodySymbolE + panelcenter + roombactrl + panelBodyRowEnd + panelBodyEnd;
 
-  server.send ( 200, "text/html", header + navbar + containerStart + card1 + card2 + card3 + card4 + panelEnd + title3 + commands + containerEnd + siteEnd);
+  server.send ( 200, "text/html", header + navbar + containerStart + card5 + panelEnd + containerEnd + containerStart + card1 + card2 + card3 + card4 + panelEnd + containerEnd + siteEnd);
 }
 String getContentType(String filename) {
   if (server.hasArg("download")) return "application/octet-stream";
@@ -953,7 +953,13 @@ void handleFormat() {
   server.send ( 200, "text/html", String(headerRedir) + "OK" + String(siteEnd));
 }
 void handle_fupload_html() {
-  String HTML = "<br>Files on flash:<br>";
+  String HTML = header + navbar + containerStart;
+  HTML += panelHeaderName + String("Roomba-WiFi File Uploader") + panelHeaderEnd + panelBodyStart;
+  HTML += "<form method='POST' action='/fupload2' enctype='multipart/form-data'>";
+  HTML += "<input type='file' name='update' multiple><input type='submit' value='Update'></form>";
+  HTML += "<br<b>For webfiles only!!</b>Multiple files possible<br>";
+  HTML += panelBodyRowEnd + panelBodyEnd;
+  HTML += panelHeaderName + "Files on flash:" + panelHeaderEnd + panelBodyStart;
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
     fileName = dir.fileName();
@@ -966,7 +972,8 @@ void handle_fupload_html() {
     HTML += "<br>";
     //Serial.printf("FS File: %s, size: %s\n", fileName.c_str(), formatBytes(fileSize).c_str());
   }
-  server.send ( 200, "text/html", "<form method='POST' action='/fupload2' enctype='multipart/form-data'><input type='file' name='update' multiple><input type='submit' value='Update'></form><br<b>For webfiles only!!</b>Multiple files possible<br>" + HTML);
+  HTML += panelBodyRowEnd + panelBodyEnd + containerEnd + siteEnd;
+  server.send( 200, "text/html", HTML);
 }
 #endif
 void handle_api() {
@@ -1067,11 +1074,18 @@ void handle_config() {
   #endif
   // Build HTML page with existing vals pre-filled
   HTML = header + navbar + containerStart;
-  HTML += panelHeaderName + String("Roomba WiFi Config") + panelHeaderEnd;
-  HTML += panelBodySymbolS + String("globe") + panelBodyStart + String("IP Address") + panelBodyValue + ClientIP + panelBodyEnd;
-  HTML += panelBodySymbolS + String("globe") + panelBodyStart + "<form method='POST' action='/wifisetup' enctype='multipart/form-data'>SSID: <input type='text' name='ssid' value='" + String(l_ssid) +"'><BR>Pass: <input type='password' name='wifipass'><BR><input type='submit' value='Save'></form>" + "Beware: no \"[]=\" allowed in password" + panelBodyEnd;
-  HTML += panelBodySymbolS + String("globe") + panelBodyStart + "<form method='POST' action='/mqttsetup' enctype='multipart/form-data'>Broker: <input type='text' name='broker' value='" + String(l_broker) +"'><BR>Command-Topic: <input type='text' name='topic' value='" + String(l_topic) + "'><BR><input type='submit' value='Save'></form>"+ panelBodyEnd;
-
+  HTML += panelHeaderName + String("Roomba-WiFi Config") + panelHeaderEnd + panelBodyStart;
+  HTML += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Current IP Address: ") + panelBodyValue + ClientIP + panelBodyRowEnd;panelBodyStart + panelBodyValue + ClientIP + panelBodyRowEnd + panelBodyEnd;
+  HTML += panelHeaderName + String("Wireless Setup") + panelHeaderEnd + panelBodyStart;
+  HTML += panelBodySymbolS + String("globe") + panelBodySymbolE + "<form method='POST' action='/wifisetup' enctype='multipart/form-data'>";
+  HTML += "SSID: <input class='w3-input w3-animate-input w3-border w3-round-large' type='text' name='ssid' style='width:15%' placeholder='" + String(l_ssid) + "'>";
+  HTML += "<BR>Pass: <input class='w3-input w3-animate-input w3-border w3-round-large' type='password' style='width:15%' name='wifipass'>";
+  HTML += "<BR><input type='submit' value='Save'></form><p>Beware: no \"[]=\" allowed in password</p>" + panelBodyRowEnd + panelBodyEnd;
+  HTML += panelHeaderName + String(" MQTT Setup") + panelHeaderEnd + panelBodyStart;
+  HTML += panelBodySymbolS + String("globe") + panelBodySymbolE + "<form method='POST' action='/mqttsetup' enctype='multipart/form-data'>";
+  HTML += "Broker: <input class='w3-input w3-animate-input w3-border w3-round-large' type='text' name='broker' style='width:15%' placeholder='" + String(l_broker) +"'>";
+  HTML += "<BR>Command-Topic: <input class='w3-input w3-animate-input w3-border w3-round-large' type='text' name='topic' style='width:25%' placeholder='" + String(l_topic) + "'>";
+  HTML += "<BR><input type='submit' value='Save'></form>" + panelBodyRowEnd + panelBodyEnd;
   HTML += containerEnd + siteEnd;
   server.send ( 200, "text/html", HTML);
 }
