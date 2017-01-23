@@ -794,7 +794,7 @@ static void setupWebServer(void) {
 void handle_root() {
   String s_currMode = "Undef.";
   String s_chargeMode = "Undef.";
-  String s_chargeState = String(getBatteryCharge(),DEC);
+  uint16_t i_chargeState = getBatteryCharge();
   String s_chargeCap = String(getBatteryCap());
   String s_powerReading = String(getCurrentAmps());
   EIOMode e_currMode = getMode();
@@ -854,7 +854,13 @@ void handle_root() {
   String card2  = panelHeaderName + "Interface status" + panelHeaderEnd + panelBodyStart;
   card2        += panelBodySymbolS + String("info") + panelBodySymbolE + String(" Roomba OI-Mode") + panelBodyValue + s_currMode + panelBodyEnd;
   String card3  = panelHeaderName + "Charging state" + panelHeaderEnd + panelBodyStart;
-  card3        += panelBodySymbolS + String("battery-half") + panelBodySymbolE + String(" Charged capacity") + panelBodyValue + s_chargeState + String(" of (approx.) ") + s_chargeCap + String("mAh") + panelBodyRowEnd;
+  card3        += panelBodySymbolS + String("battery-");
+  if ( i_chargeState > 2100 ) card3 += String("full");
+  else if ( i_chargeState > 1500 ) card3 += String("three-quarters");
+  else if ( i_chargeState > 900) card3 += String("half");
+  else if ( i_chargeState > 300) card3 += String("quarter");
+  else card3 += "empty";
+  card3        += panelBodySymbolE + String(" Charged capacity") + panelBodyValue + String(i_chargeState,DEC) + String(" of (approx.) ") + s_chargeCap + String("mAh") + panelBodyRowEnd;
   card3        += panelBodySymbolS + String("info") + panelBodySymbolE + String(" Charging mode: ") + panelBodyValue + s_chargeMode + panelBodyRowEnd;
   card3        += panelBodySymbolS + String("battery-3") + panelBodySymbolE + String(" Power state:") + panelBodyValue + s_powerReading + String("mAh") + panelBodyRowEnd + panelBodyEnd;
   String card4  = panelHeaderName + "Connections" + panelHeaderEnd + panelBodyStart;
@@ -864,7 +870,7 @@ void handle_root() {
   card4        += panelBodyRowEnd + panelBodyEnd;
 
   String card5 = panelHeaderName + String("Commands") + panelHeaderEnd + panelBodyStart;
-  card5        += panelBodySymbolS + String("globe") + panelBodySymbolE + panelcenter + roombactrl + panelBodyRowEnd + panelBodyEnd;
+  card5        += panelBodySymbolS + String("taxi") + panelBodySymbolE + panelcenter + roombactrl + panelBodyRowEnd + panelBodyEnd;
 
   server.send ( 200, "text/html", header + navbar + containerStart + card5 + panelEnd + containerEnd + containerStart + card1 + card2 + card3 + card4 + panelEnd + containerEnd + siteEnd);
 }
