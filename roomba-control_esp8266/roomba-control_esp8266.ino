@@ -796,7 +796,7 @@ void handle_root() {
   String s_chargeMode = "Undef.";
   uint16_t i_chargeState = getBatteryCharge();
   String s_chargeCap = String(getBatteryCap());
-  String s_powerReading = String(getCurrentAmps());
+  uint16_t i_powerReading = getCurrentAmps();
   EIOMode e_currMode = getMode();
   
   switch (e_currMode) {
@@ -862,7 +862,10 @@ void handle_root() {
   else card3 += "empty";
   card3        += panelBodySymbolE + String(" Charged capacity") + panelBodyValue + String(i_chargeState,DEC) + String(" of (approx.) ") + s_chargeCap + String("mAh") + panelBodyRowEnd;
   card3        += panelBodySymbolS + String("info") + panelBodySymbolE + String(" Charging mode: ") + panelBodyValue + s_chargeMode + panelBodyRowEnd;
-  card3        += panelBodySymbolS + String("battery-3") + panelBodySymbolE + String(" Power state:") + panelBodyValue + s_powerReading + String("mAh") + panelBodyRowEnd + panelBodyEnd;
+  card3        += panelBodySymbolS;
+  if (i_powerReading < 0) card3 += String("battery-3");
+  else card3 += String("flash");
+  card3        += panelBodySymbolE + String(" Power consumption:") + panelBodyValue + String(i_powerReading,DEC) + String("mAh") + panelBodyRowEnd + panelBodyEnd;
   String card4  = panelHeaderName + "Connections" + panelHeaderEnd + panelBodyStart;
   card4        += panelHeaderName + String("MQTT server") + panelHeaderEnd + panelBodyStart;
   card4        += panelBodySymbolS + String("globe") + panelBodySymbolE + String(" Broker") + String("IP Address") + panelBodyValue + _mqttServer + panelBodyRowEnd;
