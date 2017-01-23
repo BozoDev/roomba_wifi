@@ -847,20 +847,20 @@ void handle_root() {
   delay(500);
 
   String card1  = panelHeaderName + "General Info" + panelHeaderEnd + panelBodyStart;
-  card1        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("IP Address") + panelBodyValue + ClientIP + panelBodyRowEnd;
-  card1        += panelBodySymbolS + String("tag") + panelBodySymbolE + String("Client Name") + panelBodyValue + espName + panelBodyRowEnd;
-  card1        += panelBodySymbolS + String("clock-o") + panelBodySymbolE + String("Uptime") + panelBodyValue + hour() + String(" h ") + minute() + String(" min ") + second() + String(" sec") + panelBodyRowEnd;
-  card1        += panelBodySymbolS + String("info") + panelBodySymbolE  + String("Roomba-WiFi Version") + panelBodyValue + roomba_wifiVersion + panelBodyRowEnd + panelBodyEnd;
+  card1        += panelBodySymbolS + String("globe") + panelBodySymbolE + String(" IP Address") + panelBodyValue + ClientIP + panelBodyRowEnd;
+  card1        += panelBodySymbolS + String("tag") + panelBodySymbolE + String(" Client Name") + panelBodyValue + espName + panelBodyRowEnd;
+  card1        += panelBodySymbolS + String("clock-o") + panelBodySymbolE + String(" Uptime") + panelBodyValue + hour() + String(" h ") + minute() + String(" min ") + second() + String(" sec") + panelBodyRowEnd;
+  card1        += panelBodySymbolS + String("info") + panelBodySymbolE  + String(" Roomba-WiFi Version") + panelBodyValue + roomba_wifiVersion + panelBodyRowEnd + panelBodyEnd;
   String card2  = panelHeaderName + "Interface status" + panelHeaderEnd + panelBodyStart;
-  card2        += panelBodySymbolS + String("info") + panelBodySymbolE + String("Roomba OI-Mode") + panelBodyValue + s_currMode + panelBodyEnd;
+  card2        += panelBodySymbolS + String("info") + panelBodySymbolE + String(" Roomba OI-Mode") + panelBodyValue + s_currMode + panelBodyEnd;
   String card3  = panelHeaderName + "Charging state" + panelHeaderEnd + panelBodyStart;
-  card3        += panelBodySymbolS + String("battery-half") + panelBodySymbolE + String("Charged capacity") + panelBodyValue + s_chargeState + String(" of (approx.) ") + s_chargeCap + String("mAh") + panelBodyRowEnd;
-  card3        += panelBodySymbolS + String("info") + panelBodySymbolE + String("Charging mode: ") + panelBodyValue + s_chargeMode + panelBodyRowEnd;
-  card3        += panelBodySymbolS + String("battery-3") + panelBodySymbolE + String("Power state:") + panelBodyValue + s_powerReading + String("mAh") + panelBodyRowEnd + panelBodyEnd;
+  card3        += panelBodySymbolS + String("battery-half") + panelBodySymbolE + String(" Charged capacity") + panelBodyValue + s_chargeState + String(" of (approx.) ") + s_chargeCap + String("mAh") + panelBodyRowEnd;
+  card3        += panelBodySymbolS + String("info") + panelBodySymbolE + String(" Charging mode: ") + panelBodyValue + s_chargeMode + panelBodyRowEnd;
+  card3        += panelBodySymbolS + String("battery-3") + panelBodySymbolE + String(" Power state:") + panelBodyValue + s_powerReading + String("mAh") + panelBodyRowEnd + panelBodyEnd;
   String card4  = panelHeaderName + "Connections" + panelHeaderEnd + panelBodyStart;
   card4        += panelHeaderName + String("MQTT server") + panelHeaderEnd + panelBodyStart;
-  card4        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Broker") + String("IP Address") + panelBodyValue + _mqttServer + panelBodyRowEnd;
-  card4        += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Publisher") + String("ID") + panelBodyValue + _mqttRoombaName + panelBodyRowEnd + panelBodyEnd;
+  card4        += panelBodySymbolS + String("globe") + panelBodySymbolE + String(" Broker") + String("IP Address") + panelBodyValue + _mqttServer + panelBodyRowEnd;
+  card4        += panelBodySymbolS + String("globe") + panelBodySymbolE + String(" Publisher") + String("ID") + panelBodyValue + _mqttRoombaName + panelBodyRowEnd + panelBodyEnd;
   card4        += panelBodyRowEnd + panelBodyEnd;
 
   String card5 = panelHeaderName + String("Commands") + panelHeaderEnd + panelBodyStart;
