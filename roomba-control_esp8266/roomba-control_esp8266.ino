@@ -960,19 +960,21 @@ void handle_fupload_html() {
   HTML += "<br<b>For webfiles only!!</b>Multiple files possible<br>";
   HTML += panelBodyRowEnd + panelBodyEnd;
   HTML += panelHeaderName + "Files on flash:" + panelHeaderEnd + panelBodyStart;
+  HTML += "<table class='w3-table-all w3-hoverable'>";
+  HTML += "<TR><TH>Filename</TH><TH>Bytes (pretty)</TH><TH>Bytes (raw)</TH></TR>";
   Dir dir = SPIFFS.openDir("/");
   while (dir.next()) {
     fileName = dir.fileName();
     size_t fileSize = dir.fileSize();
-    HTML += fileName.c_str();
-    HTML += " ";
+    HTML += "<TR><TD><a class='w3-hover-none w3-text-dark-grey w3-hover-text-white' href='" + String(fileName) + "' class='w3-text-shadow w3-grey w3-text-dark-grey w3-hover-text-white'>" + String(fileName) + "</a></TD>";
+    HTML += "<TD>";
     HTML += formatBytes(fileSize).c_str();
-    HTML += " , ";
+    HTML += "</TD><TD>";
     HTML += fileSize;
-    HTML += "<br>";
+    HTML += "</TD></TR>";
     //Serial.printf("FS File: %s, size: %s\n", fileName.c_str(), formatBytes(fileSize).c_str());
   }
-  HTML += panelBodyRowEnd + panelBodyEnd + containerEnd + siteEnd;
+  HTML += "</TABLE>" + panelBodyRowEnd + panelBodyEnd + containerEnd + siteEnd;
   server.send( 200, "text/html", HTML);
 }
 #endif
@@ -1075,9 +1077,9 @@ void handle_config() {
   // Build HTML page with existing vals pre-filled
   HTML = header + navbar + containerStart;
   HTML += panelHeaderName + String("Roomba-WiFi Config") + panelHeaderEnd + panelBodyStart;
-  HTML += panelBodySymbolS + String("globe") + panelBodySymbolE + String("Current IP Address: ") + panelBodyValue + ClientIP + panelBodyRowEnd;panelBodyStart + panelBodyValue + ClientIP + panelBodyRowEnd + panelBodyEnd;
+  HTML += panelBodySymbolS + String("globe") + panelBodySymbolE + String(" Current IP Address: ") + panelBodyValue + ClientIP + panelBodyRowEnd;panelBodyStart + panelBodyValue + ClientIP + panelBodyRowEnd + panelBodyEnd;
   HTML += panelHeaderName + String("Wireless Setup") + panelHeaderEnd + panelBodyStart;
-  HTML += panelBodySymbolS + String("globe") + panelBodySymbolE + "<form method='POST' action='/wifisetup' enctype='multipart/form-data'>";
+  HTML += panelBodySymbolS + String("wifi") + panelBodySymbolE + "<form method='POST' action='/wifisetup' enctype='multipart/form-data'>";
   HTML += "SSID: <input class='w3-input w3-animate-input w3-border w3-round-large' type='text' name='ssid' style='width:15%' placeholder='" + String(l_ssid) + "'>";
   HTML += "<BR>Pass: <input class='w3-input w3-animate-input w3-border w3-round-large' type='password' style='width:15%' name='wifipass'>";
   HTML += "<BR><input type='submit' value='Save'></form><p>Beware: no \"[]=\" allowed in password</p>" + panelBodyRowEnd + panelBodyEnd;
